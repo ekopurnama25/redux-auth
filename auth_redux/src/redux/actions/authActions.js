@@ -1,6 +1,6 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { LOGIN_SUCCESS } from "../types";
+import Cookies from "js-cookie";
 
 export const loginAuthAction = (data) => {
   return async (dispatch) => {
@@ -32,8 +32,12 @@ export const loginAuthAction = (data) => {
           errorMessage: false,
         },
       });
-      const token = JSON.stringify(res.data.accessToken);
-      Cookies.set("token", token, { expires: 365 });
+      if (res) {
+        const token = JSON.stringify(res.data.accessToken);
+        Cookies.set("token", token, { expires: 365 });
+      }
+      // const token = JSON.stringify(res.data.accessToken);
+      // Cookies.set("token", token, { expires: 365 });
     } catch (error) {
       console.log("3. Gagal :", error.message);
       dispatch({
