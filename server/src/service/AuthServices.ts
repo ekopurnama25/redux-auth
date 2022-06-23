@@ -67,7 +67,10 @@ class AuthServices {
                     }else{
                         res.status(505).json({ message: "Password Incorect" });
                     }
-                    res.cookie('token',createAccessToken(validUSers));
+                    res.cookie('token',createAccessToken(validUSers), {
+                        httpOnly: true,
+                        maxAge: 24 * 60 * 60 * 1000,
+                    });
                     res.status(200).json({
                         accessToken: createAccessToken(validUSers),
                         refreshTOken: createRefreshToken(validUSers),
