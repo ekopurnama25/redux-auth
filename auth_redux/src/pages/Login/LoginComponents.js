@@ -1,39 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { loginAuthAction } from "../../redux/actions/authActions";
-//import Cookies from "js-cookie";
-import jwt_decode from "jwt-decode";
-import { getCookie } from "../../utils/cookies";
+import { useNavigate } from "react-router-dom";
+
 const LoginComponents = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //const [user, setUsers] = useState();
   const dispatch = useDispatch();
-  const { authReducersResult } = useSelector((state) => state.authReducers);
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("1. Hendle Keaction");
-    dispatch(loginAuthAction({ email: email, password: password }));
-  };
 
-  useEffect(() => {
-    if (authReducersResult) {
-      const token = getCookie();
-      jwt_decode(token);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await dispatch(
+        loginAuthAction({ email: email, password: password })
+      );
+
+      if (res) {
+        if (res.data.users.roles[0].roles === "Admin") {
+          navigate("/admin");
+        } else {
+          navigate("/users");
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }, [authReducersResult, dispatch]);
-
-  const token = getCookie();
-
-  if (token) {
-    return <Navigate to="/" />;
-  }
+  };
 
   return (
     <div>
-      {authReducersResult && <Navigate to="/" />}
-      <form onSubmit={(event) => handleSubmit(event)}>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           name="email"
@@ -51,6 +48,9 @@ const LoginComponents = () => {
         />
         <br />
         <button type="submit"> Login </button>
+
+        <br />
+        <button> Daftar </button>
       </form>
     </div>
   );

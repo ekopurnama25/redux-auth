@@ -10,9 +10,9 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
           throw new Error("not authenticated");
         }
         const authtoken = token.split(" ")[1];
-
         if(token){
             const user = jwt.verify(authtoken, process.env.ACCESS_TOKEN_SECRET!);
+            //console.log("res",user); 
             const reqId = req as CostomRequest;
             reqId.userId = user.userId;
         }else{

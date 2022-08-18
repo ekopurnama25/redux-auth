@@ -9,6 +9,7 @@ const app = Express();
 
 const corsOptions ={
     credentials:true,
+    origin: true,
     optionSuccessStatus:200
 }
 app.use(cors(corsOptions));

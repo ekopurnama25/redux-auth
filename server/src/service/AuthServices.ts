@@ -67,7 +67,10 @@ class AuthServices {
                     }else{
                         res.status(505).json({ message: "Password Incorect" });
                     }
-                    res.cookie('token',createAccessToken(validUSers));
+                    res.cookie('refreshToken', createRefreshToken(validUSers), {
+                        httpOnly: true,
+                        maxAge: 24 * 60 * 60 * 1000,
+                    });
                     res.status(200).json({
                         accessToken: createAccessToken(validUSers),
                         refreshTOken: createRefreshToken(validUSers),
@@ -107,6 +110,7 @@ class AuthServices {
                     message: "Token Not Found In database" 
                 });
             }else{
+                res.cookie('token',createAccessToken(checkIdToken));
                 await getRepository(Token)
                 .createQueryBuilder()
                 .update(Token)
@@ -124,7 +128,7 @@ class AuthServices {
         }
     }
 
-    static CheckHomeAdmin = async (req: Request, res: Response,) => {
+    static CheckUsers = async (req: Request, res: Response,) => {
         const reqId = req as CostomRequest;
         const checkUSersData = await getRepository(Users)
         .createQueryBuilder('users')
@@ -148,29 +152,6 @@ class AuthServices {
         }
     }
 
-    static CheckHomeUsers = async (req: Request, res: Response,) => {
-        const reqId = req as CostomRequest;
-        const checkUSersData = await getRepository(Users)
-        .createQueryBuilder('users')
-        .leftJoinAndSelect("users.roles", "roles")
-        .leftJoinAndSelect("users.token", "token")
-        .where('users.id_users = :id_users', { id_users:  reqId!.userId })
-        .getOne();  
-        if(checkUSersData){
-            res.status(200).json({
-                status: true,
-                message: "success",
-                data: {
-                    data: checkUSersData
-                }
-            })
-        }else{
-            res.status(400).json({
-                status: false,
-                message: "Users Can't Be Found"
-            })
-        }
-    }
 }
 
 

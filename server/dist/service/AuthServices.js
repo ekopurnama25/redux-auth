@@ -77,7 +77,10 @@ AuthServices.loginUsers = (req, res) => __awaiter(void 0, void 0, void 0, functi
             else {
                 res.status(505).json({ message: "Password Incorect" });
             }
-            res.cookie('token', Auth_1.createAccessToken(validUSers));
+            res.cookie('refreshToken', Auth_1.createRefreshToken(validUSers), {
+                httpOnly: true,
+                maxAge: 24 * 60 * 60 * 1000,
+            });
             res.status(200).json({
                 accessToken: Auth_1.createAccessToken(validUSers),
                 refreshTOken: Auth_1.createRefreshToken(validUSers),
@@ -113,6 +116,7 @@ AuthServices.refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, func
             });
         }
         else {
+            res.cookie('token', Auth_1.createAccessToken(checkIdToken));
             yield typeorm_1.getRepository(TokenEntities_1.Token)
                 .createQueryBuilder()
                 .update(TokenEntities_1.Token)
@@ -129,31 +133,7 @@ AuthServices.refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, func
         }
     }
 });
-AuthServices.CheckHomeAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const reqId = req;
-    const checkUSersData = yield typeorm_1.getRepository(UserEntities_1.Users)
-        .createQueryBuilder('users')
-        .leftJoinAndSelect("users.roles", "roles")
-        .leftJoinAndSelect("users.token", "token")
-        .where('users.id_users = :id_users', { id_users: reqId.userId })
-        .getOne();
-    if (checkUSersData) {
-        res.status(200).json({
-            status: true,
-            message: "success",
-            data: {
-                data: checkUSersData
-            }
-        });
-    }
-    else {
-        res.status(400).json({
-            status: false,
-            message: "Users Can't Be Found"
-        });
-    }
-});
-AuthServices.CheckHomeUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+AuthServices.CheckUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const reqId = req;
     const checkUSersData = yield typeorm_1.getRepository(UserEntities_1.Users)
         .createQueryBuilder('users')

@@ -1,20 +1,19 @@
 import { LOGIN_SUCCESS } from "../../types";
+import { getCookie } from "../../../utils/setCookie";
 
-const initialState = {
-  authReducersResult: false,
-  authReducersLoading: false,
-  authReducersError: false,
-};
+const users = getCookie();
+
+const initialState = users
+  ? { isLoggedIn: true, users }
+  : { isLoggedIn: false, users: null };
 
 const auth = (state = initialState, action) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
-      console.log("4. Berhasil KeReduser", action);
       return {
         ...state,
-        authReducersResult: action.payload.data,
-        authReducersLoading: action.payload.loading,
-        authReducersError: action.payload.errorMessage,
+        isLoggedIn: true,
+        users: action.payload.users,
       };
     default:
       return state;

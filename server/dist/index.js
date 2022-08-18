@@ -12,6 +12,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = Express();
 const corsOptions = {
     credentials: true,
+    origin: true,
     optionSuccessStatus: 200
 };
 app.use(cors(corsOptions));
