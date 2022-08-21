@@ -1,40 +1,42 @@
 import { axiosPrivate } from "./useAxios";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { refreshTokenAction } from "../redux/actions/refreshTokenAction";
 
-const useAxiosPrivate = () => {
-  const dispatch = useDispatch();
+const useAxiosPrivate = (store) => {
   const { users } = useSelector((state) => state.authReducers);
-  useEffect(() => {
-    const requestIntercept = axiosPrivate.interceptors.request.use(
-      (config) => {
-        if (!config.headers["authorization"]) {
-          config.headers["authorization"] = `Bearer ${users?.accessToken}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
-    const responseIntercept = axiosPrivate.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const prevRequest = error?.config;
-        if (error?.response?.status === 403 && !prevRequest?.sent) {
-          prevRequest.sent = true;
-          const newAccessToken = "hallo";
-          prevRequest.headers["authorization"] = `Bearer ${newAccessToken}`;
-          return axiosPrivate(prevRequest);
-        }
-        return Promise.reject(error);
+  axiosPrivate.interceptors.request.use(
+    (config) => {
+      if (users) {
+        config.headers["authorization"] = `Bearer ${users?.accessToken}`;
       }
-    );
-    return () => {
-      axiosPrivate.interceptors.request.eject(requestIntercept);
-      axiosPrivate.interceptors.response.eject(responseIntercept);
-    };
-  }, [users]);
-  return axiosPrivate;
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+
+  const { dispatch } = store;
+  axiosPrivate.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const prevRequest = error?.config;
+      if (originalConfig.url !== "/auth" && err.response) {
+        if (error.response.status === 401 && !prevRequest.sent) {
+          prevRequest.sent = true;
+          try {
+            const rs = await axiosPrivate.post("/refresh_token/", {
+              refreshToken: users.refreshTOken,
+            });
+            const { accessToken } = rs.data;
+            dispatch(refreshTokenAction(accessToken));
+            return axiosPrivate(prevRequest);
+          } catch {
+            return Promise.reject(error);
+          }
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
 };
 
 export default useAxiosPrivate;
-z;

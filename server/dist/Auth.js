@@ -4,7 +4,7 @@ exports.createRefreshToken = exports.createAccessToken = void 0;
 const jsonwebtoken_1 = require("jsonwebtoken");
 const createAccessToken = (user) => {
     return jsonwebtoken_1.sign({ userId: user.id_users }, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "1m"
+        expiresIn: "30s"
     });
 };
 exports.createAccessToken = createAccessToken;

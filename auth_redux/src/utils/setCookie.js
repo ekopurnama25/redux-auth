@@ -6,7 +6,8 @@ export const setCookie = (data) => {
 };
 
 export const getCookie = () => {
-  if (typeof myVar !== "undefined") {
+  let users = Cookies.get("authToken");
+  if (typeof users !== "undefined") {
     return JSON.parse(Cookies.get("authToken"));
   }
   return null;

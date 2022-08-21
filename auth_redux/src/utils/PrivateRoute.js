@@ -6,7 +6,6 @@ const PrivateRoute = ({ children, allowRoles }) => {
   const { isLoggedIn, users } = useSelector((state) => state.authReducers);
   const userHasRequired =
     users && allowRoles.includes(users?.users?.roles[0]?.roles) ? true : false;
-  console.log(users?.accessToken);
 
   if (!isLoggedIn) {
     return <Navigate to={"/login"} />;

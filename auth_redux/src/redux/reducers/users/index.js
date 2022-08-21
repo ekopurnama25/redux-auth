@@ -8,7 +8,6 @@ const initialState = {
 const users = (state = initialState, action) => {
   switch (action.type) {
     case ACCESS_TOKEN_USER:
-      console.log("4.MASUK REDUCERS", action);
       return {
         ...state,
         isLoading: true,
