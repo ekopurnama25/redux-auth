@@ -1,10 +1,10 @@
 import { REFRESH_TOKEN_SUCCESS } from "../types";
-import { setCookie } from "../../utils/setCookie";
+import { UpdatesetCookie } from "../../utils/setCookie";
 
 export const refreshTokenAction = (accessToken) => (dispatch) => {
   dispatch({
     type: REFRESH_TOKEN_SUCCESS,
-    payload: accessToken,
+    payload: { users: accessToken },
   });
-  setCookie(accessToken);
+  UpdatesetCookie(accessToken);
 };

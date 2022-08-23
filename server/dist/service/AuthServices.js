@@ -101,6 +101,12 @@ AuthServices.refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, func
     const checkId = typeorm_1.getRepository(UserEntities_1.Users);
     const checkIdToken = yield checkId.findOne({ where: { id_users: reqId.userId }
     });
+    const users = yield typeorm_1.getRepository(UserEntities_1.Users)
+        .createQueryBuilder('users')
+        .leftJoinAndSelect("users.roles", "roles")
+        .leftJoinAndSelect("users.token", "token")
+        .where('users.id_users = :id_users', { id_users: reqId.userId })
+        .getOne();
     if (!token) {
         res.status(501).json({
             message: "Token cannot be empty"
@@ -111,7 +117,7 @@ AuthServices.refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, func
         const TokenRefresh = yield refreshTokenId.findOne({ where: { refreshToken: token.refreshToken }
         });
         if (!(TokenRefresh === null || TokenRefresh === void 0 ? void 0 : TokenRefresh.refreshToken)) {
-            res.status(501).json({
+            res.status(502).json({
                 message: "Token Not Found In database"
             });
         }
@@ -129,6 +135,7 @@ AuthServices.refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, func
             res.status(200).json({
                 accessToken: Auth_1.createAccessToken(checkIdToken),
                 refreshTOken: Auth_1.createRefreshToken(checkIdToken),
+                users
             });
         }
     }

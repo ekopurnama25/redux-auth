@@ -9,16 +9,17 @@ const initialState = users
 const auth = (state = initialState, action) => {
   switch (action.type) {
     case LOGIN_SUCCESS:
-      console.log("4.MASUK REDUCERS", action);
       return {
         ...state,
         isLoggedIn: true,
         users: action.payload.users,
       };
     case REFRESH_TOKEN_SUCCESS:
+      console.log("4.MASUK REDUCERS", action);
       return {
         ...state,
-        users: { ...users, accessToken: action.payload },
+        isLoggedIn: true,
+        users: action.payload.users,
       };
     default:
       return state;

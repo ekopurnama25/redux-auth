@@ -5,6 +5,11 @@ export const setCookie = (data) => {
   Cookies.set("authToken", setencodedCookiesToken);
 };
 
+export const UpdatesetCookie = (accessToken) => {
+  let setencodedCookiesToken = JSON.stringify(accessToken);
+  Cookies.set("authToken", setencodedCookiesToken);
+};
+
 export const getCookie = () => {
   let users = Cookies.get("authToken");
   if (typeof users !== "undefined") {

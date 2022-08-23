@@ -10,7 +10,7 @@ const createAccessToken = (user) => {
 exports.createAccessToken = createAccessToken;
 const createRefreshToken = (user) => {
     return jsonwebtoken_1.sign({ userId: user.id_users }, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: "5m"
+        expiresIn: "1h"
     });
 };
 exports.createRefreshToken = createRefreshToken;

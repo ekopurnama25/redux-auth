@@ -7,12 +7,9 @@ const CheckUsers = ({ children }) => {
 
   const { users } = useSelector((state) => state.authReducers);
   useEffect(() => {
-    // console.log(users);
     const ChecksersToken = () => {
       try {
-        console.log(users);
-        dispatch(getUsers(users?.accessToken));
-        // console.log(res);
+        dispatch(getUsers());
       } catch (error) {
         console.log(error);
       }

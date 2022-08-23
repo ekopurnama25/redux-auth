@@ -94,6 +94,13 @@ class AuthServices {
             { id_users: reqId.userId }
         });
 
+        const users = await getRepository(Users)
+        .createQueryBuilder('users')
+        .leftJoinAndSelect("users.roles", "roles")
+        .leftJoinAndSelect("users.token", "token") 
+        .where('users.id_users = :id_users', { id_users: reqId.userId  })
+        .getOne();
+
         if(!token){
             res.status(501).json({
                 message: "Token cannot be empty" 
@@ -106,7 +113,7 @@ class AuthServices {
                 { refreshToken: token.refreshToken }
             });
             if(!TokenRefresh?.refreshToken){
-                res.status(501).json({
+                res.status(502).json({
                     message: "Token Not Found In database" 
                 });
             }else{
@@ -123,6 +130,7 @@ class AuthServices {
                 res.status(200).json({
                     accessToken: createAccessToken(checkIdToken),
                     refreshTOken: createRefreshToken(checkIdToken),
+                    users
                 });
             }
         }
